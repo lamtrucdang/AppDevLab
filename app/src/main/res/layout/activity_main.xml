@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageAndroid"
+            android:src="@drawable/unnamed"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:id="@+id/new_game"
+            android:lines="1"
+            android:padding="10px"
+            android:layout_gravity="center"
+            android:text="New Game"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:id="@+id/continue_game"
+            android:lines="1"
+            android:padding="10px"
+            android:layout_gravity="center"
+            android:text="Continue Game"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:id="@+id/help"
+            android:lines="1"
+            android:padding="10px"
+            android:layout_gravity="center"
+            android:text="Help"/>
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:id="@+id/quit"
+            android:lines="1"
+            android:padding="10px"
+            android:layout_gravity="center"
+            android:text="Quit"/>
+    </LinearLayout>
+
+
+</LinearLayout>
