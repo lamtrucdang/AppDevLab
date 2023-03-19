@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
 
-                if (keyEvent.getAction() == keyEvent.ACTION_DOWN && (i == keyEvent.KEYCODE_DPAD_CENTER))
+                if (keyEvent.getAction() == keyEvent.ACTION_DOWN && (i == keyEvent.KEYCODE_BACK))
                 {
                     String message = textInput.getText().toString();
                     alertDialog.setMessage(message);
