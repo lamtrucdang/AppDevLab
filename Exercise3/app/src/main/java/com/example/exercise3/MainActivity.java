@@ -1,150 +1,147 @@
-package com.example.exercise3;
+package com.example.exercise3.;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
-import android.app.Activity;
+import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.Button;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
-    View.OnClickListener buttonListener;
-    EditText tvresult;
-    Button btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9, btn_0, btn_plus, btn_minus, btn_multi, btn_divide, btn_result, btn_reset;
-    Integer lastvalue = 0,currentvalue;
-    String operation;
+import com.google.android.material.button.MaterialButton;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
+    TextView resultTv, solutionTv;
+    MaterialButton buttonC, buttonBrackOpen, buttonBrackClose;
+    MaterialButton buttonDivide, buttonMultiply, buttonPlus, buttonMinus, buttonEquals;
+    MaterialButton button0, button1, button2, button3, button4, button5, button6, button7, button8, button9;
+    MaterialButton buttonAC, buttonDot;
+
+    SharedPreferences sharedPreferences;
+
+//    SQLiteDatabase calculatorDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        resultTv = findViewById(R.id.result_tv);
+        solutionTv = findViewById(R.id.solution_tv);
 
-        tvresult = (EditText) findViewById(R.id.text);
-        btn_1 = (Button) findViewById(R.id.btn_1);
-        btn_2 = (Button) findViewById(R.id.btn_2);
-        btn_3 = (Button) findViewById(R.id.btn_3);
-        btn_4 = (Button) findViewById(R.id.btn_4);
-        btn_5 = (Button) findViewById(R.id.btn_5);
-        btn_6 = (Button) findViewById(R.id.btn_6);
-        btn_7 = (Button) findViewById(R.id.btn_7);
-        btn_8 = (Button) findViewById(R.id.btn_8);
-        btn_9 = (Button) findViewById(R.id.btn_9);
-        btn_0 = (Button) findViewById(R.id.btn_0);
-        btn_plus = (Button) findViewById(R.id.btn_plus);
-        btn_minus = (Button) findViewById(R.id.btn_minus);
-        btn_multi = (Button) findViewById(R.id.btn_multi);
-        btn_divide = (Button) findViewById(R.id.btn_divide);
-        btn_result = (Button) findViewById(R.id.btn_result);
-        btn_reset = (Button) findViewById(R.id.btn_reset);
-        buttonListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button btn = (Button) v;
-                switch (btn.getId()) {
-                    case R.id.btn_0:
-                        setvalue(tvresult, "0");
-                        break;
-                    case R.id.btn_1:
-                        setvalue(tvresult, "1");
-                        break;
-                    case R.id.btn_2:
-                        setvalue(tvresult, "2");
-                        break;
-                    case R.id.btn_3:
-                        setvalue(tvresult, "3");
-                        break;
-                    case R.id.btn_4:
-                        setvalue(tvresult, "4");
-                        break;
-                    case R.id.btn_5:
-                        setvalue(tvresult, "5");
-                        break;
-                    case R.id.btn_6:
-                        setvalue(tvresult, "6");
-                        break;
-                    case R.id.btn_7:
-                        setvalue(tvresult, "7");
-                        break;
-                    case R.id.btn_8:
-                        setvalue(tvresult, "8");
-                        break;
-                    case R.id.btn_9:
-                        setvalue(tvresult, "9");
-                        break;
-                    case R.id.btn_plus:
+        assignId(buttonC, R.id.buttons_C);
+        assignId(buttonAC, R.id.buttons_AllClear);
+        assignId(buttonBrackOpen, R.id.buttons_open_bracket);
+        assignId(buttonBrackClose, R.id.buttons_close_bracket);
+        assignId(buttonDivide,R.id.buttons_divide);
+        assignId(buttonMultiply,R.id.buttons_multiply);
+        assignId(buttonMinus, R.id.buttons_minus);
+        assignId(buttonPlus, R.id.buttons_plus);
+        assignId(buttonDot, R.id.buttons_dot);
+        assignId(buttonEquals, R.id.buttons_equal);
+        assignId(button0, R.id.buttons_0);
+        assignId(button1, R.id.buttons_1);
+        assignId(button2, R.id.buttons_2);
+        assignId(button3, R.id.buttons_3);
+        assignId(button4, R.id.buttons_4);
+        assignId(button5, R.id.buttons_5);
+        assignId(button6, R.id.buttons_6);
+        assignId(button7, R.id.buttons_7);
+        assignId(button8, R.id.buttons_8);
+        assignId(button9, R.id.buttons_9);
 
-                        operation = "plus";
-                        break;
-                    case R.id.btn_minus:
-                        operation = "minus";
-                        break;
-                    case R.id.btn_multi:
-                        operation = "multi";
-                        break;
-                    case R.id.btn_divide:
-                        operation = "divide";
-                        break;
-                    case R.id.btn_result:
-                        lastvalue = Integer.parseInt(tvresult.getText().toString());
-                        break;
-                    case R.id.btn_reset:
-                        resetvalue();
-                        break;
-                }
+//        // Create database
+//        calculatorDB = this.openOrCreateDatabase("Calculator", MODE_PRIVATE, null);
+//
+//        calculatorDB.execSQL("CREATE TABLE IF NOT EXISTS results(id INTEGER PRIMARY KEY, content VARCHAR)");
+//
+//        calculatorDB.execSQL("DELETE FROM results");
+
+        // Shared preferences
+        sharedPreferences = this.getSharedPreferences("com.example.calculator", android.content.Context.MODE_PRIVATE);
+
+        // Update previous result
+        String previous = sharedPreferences.getString("preResult", "");
+
+        Log.i("previous result", previous);
+
+        solutionTv.setText(previous);
+
+    }
+
+    void assignId(MaterialButton btn, int id){
+        btn = findViewById(id);
+        btn.setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+
+        MaterialButton button =(MaterialButton) view;
+        String buttonText = button.getText().toString();
+        String dataToCalculate = resultTv.getText().toString();
+
+        if(buttonText.equals("AC")){
+            resultTv.setText("0");
+            return;
+        }
+
+        if(buttonText.equals("=")){
+            String finalResult = getResult(dataToCalculate);
+            resultTv.setText(finalResult);
+            String preResult = dataToCalculate + "=" + finalResult;
+
+//            String sql = "INSERT INTO results (content) VALUES (" + dataToCalculate + "=" + finalResult + ")";
+//            SQLiteStatement statement = calculatorDB.compileStatement(sql);
+//            statement.execute();
+//
+//            Cursor c = calculatorDB.rawQuery("SELECT * FROM results", null);
+//            int contentIndex = c.getColumnIndex("content");
+//
+//            if (c.moveToFirst()){
+//
+//                do{
+//                    Log.i("content", c.getString(contentIndex));
+//                } while (c.moveToNext());
+//            }
+
+            // Store previous result to shared preferences
+            sharedPreferences.edit().putString("preResult", preResult).apply();
+
+            // Update previous result
+            String previous = sharedPreferences.getString("preResult", "");
+
+            Log.i("previous result", previous);
+
+            solutionTv.setText(previous);
+
+            return;
+        }
+        if(buttonText.equals("C")){
+            dataToCalculate = dataToCalculate.substring(0, dataToCalculate.length()-1);
+        }else{
+            dataToCalculate = dataToCalculate + buttonText;
+        }
+        resultTv.setText(dataToCalculate);
+
+
+    }
+    String getResult(String data){
+        try{
+            Context context = Context.enter();
+            context.setOptimizationLevel(-1);
+            Scriptable scriptable = context.initStandardObjects();
+            String finalResult = context.evaluateString(scriptable,data,"Javascrip",1, null).toString();
+            if(finalResult.endsWith(".0")){
+                finalResult = finalResult.replace(".0","");
             }
-        };
-
-        btn_0.setOnClickListener(buttonListener);
-        btn_1.setOnClickListener(buttonListener);
-        btn_2.setOnClickListener(buttonListener);
-        btn_3.setOnClickListener(buttonListener);
-        btn_4.setOnClickListener(buttonListener);
-        btn_5.setOnClickListener(buttonListener);
-        btn_6.setOnClickListener(buttonListener);
-        btn_7.setOnClickListener(buttonListener);
-        btn_8.setOnClickListener(buttonListener);
-        btn_9.setOnClickListener(buttonListener);
-        btn_plus.setOnClickListener(buttonListener);
-        btn_minus.setOnClickListener(buttonListener);
-        btn_multi.setOnClickListener(buttonListener);
-        btn_divide.setOnClickListener(buttonListener);
-        btn_result.setOnClickListener(buttonListener);
-        btn_reset.setOnClickListener(buttonListener);
-    }
-
-    public void setvalue(EditText a, String b){
-        String last = a.getText().toString();
-        if(!last.equals("0")){
-            last +=b;
-            b=last;
+            return finalResult;
+        }catch (Exception e){
+            return "ERR";
         }
-        a.setText(b);
-    }
-
-    public void resetvalue(){
-        tvresult.setText("0");
-    }
-
-    public Integer process(Integer a, Integer b){
-        Integer presult=0;
-        if (operation=="plus") {
-            presult = a + b;
-            tvresult.setText(presult.toString());
-        }
-        if (operation=="minus") {
-            presult = a - b;
-            tvresult.setText(presult.toString());
-        }
-        if (operation=="multi") {
-            presult = a * b;
-            tvresult.setText(presult.toString());
-        }
-        if (operation=="divide") {
-            presult = a / b;
-            tvresult.setText(presult.toString());
-        }
-        return presult;
     }
 }
